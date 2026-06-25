@@ -1,0 +1,5 @@
+# Normalize text files to LF; treat known binaries as binary.
+* text=auto eol=lf
+*.stl binary
+*.png binary
+*.jpg binary
