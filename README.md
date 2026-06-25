@@ -1,5 +1,8 @@
 # STL Painter — Demo
 
+> Paint colors onto 3D-printable STL models in the browser, then export
+> color-capable 3MF/PLY for multi-material slicing. Built with Three.js + WebGL.
+
 A browser-based tool for **painting colors onto 3D‑printable `.stl` models** and
 exporting them to color‑capable formats that survive into slicing and
 multi‑material printing.
@@ -7,22 +10,14 @@ multi‑material printing.
 Built with [Three.js](https://threejs.org/) + WebGL, TypeScript, and Vite.
 Runs entirely client‑side — no server, no upload, no accounts.
 
+![An STL model painted and segment-filled in the browser](docs/screenshots/painted-orc.png)
+
 ## Objective
 
 STL is the lingua franca of 3D printing, but it carries **geometry only — no
 color**. This demo closes that gap: import a raw `.stl`, color it directly in
 the browser (free‑hand or by logical part), and export a format a slicer can
 read so the colors make it onto the print.
-
-## Screenshots
-
-<!-- Drop images into docs/screenshots/ and they'll render here. -->
-
-| Painted model | Region hover preview |
-| --- | --- |
-| ![Painted Orc](docs/screenshots/painted-orc.png) | ![Region hover preview](docs/screenshots/region-hover.png) |
-
-![Export in a slicer](docs/screenshots/slicer.png)
 
 ## What it can do
 
