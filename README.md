@@ -3,6 +3,8 @@
 > Paint colors onto 3D-printable STL models in the browser, then export
 > color-capable 3MF/PLY for multi-material slicing. Built with Three.js.
 
+**Live demo → [stl.natsirt.dev](https://stl.natsirt.dev)**
+
 A browser-based tool for **painting colors onto 3D‑printable `.stl` models** and
 exporting them to color‑capable formats that survive into slicing and
 multi‑material printing.
