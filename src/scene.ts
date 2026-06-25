@@ -6,10 +6,50 @@ export interface SceneContext {
   camera: THREE.PerspectiveCamera
   renderer: THREE.WebGLRenderer
   controls: OrbitControls
-  grid: THREE.GridHelper
+  grid: THREE.LineSegments
 }
 
-const BACKGROUND = 0x1a1d21
+const BACKGROUND = 0x14161a
+
+/**
+ * A single ground grid whose two center lines are colored as the X (red) and
+ * Z (blue) axes, with the rest gray — one geometry, one draw call, all coplanar.
+ */
+function makeGrid(
+  size: number,
+  divisions: number,
+  gridColor: number,
+  xAxisColor: number,
+  zAxisColor: number,
+): THREE.LineSegments
+{
+  const half = size / 2
+  const step = size / divisions
+  const grid = new THREE.Color(gridColor)
+  const xAxis = new THREE.Color(xAxisColor)
+  const zAxis = new THREE.Color(zAxisColor)
+
+  const positions: number[] = []
+  const colors: number[] = []
+  const segment = (x1: number, z1: number, x2: number, z2: number, c: THREE.Color): void =>
+  {
+    positions.push(x1, 0, z1, x2, 0, z2)
+    colors.push(c.r, c.g, c.b, c.r, c.g, c.b)
+  }
+
+  for (let i = 0; i <= divisions; i++)
+  {
+    const p = -half + i * step
+    const center = Math.abs(p) < step / 2
+    segment(-half, p, half, p, center ? xAxis : grid) // parallel to X; z = 0 is the X axis
+    segment(p, -half, p, half, center ? zAxis : grid) // parallel to Z; x = 0 is the Z axis
+  }
+
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
+  return new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ vertexColors: true }))
+}
 
 export function createScene(canvas: HTMLCanvasElement): SceneContext
 {
@@ -47,7 +87,8 @@ export function createScene(canvas: HTMLCanvasElement): SceneContext
   fill.position.set(-2, -1, -1.5)
   scene.add(fill)
 
-  const grid = new THREE.GridHelper(1000, 50, 0x3a4047, 0x262b30)
+  // Grid with the center lines colored as the X (red) and Z (blue) axes.
+  const grid = makeGrid(1000, 50, 0x262b30, 0x8a3a36, 0x36527d)
   scene.add(grid)
 
   window.addEventListener('resize', () =>

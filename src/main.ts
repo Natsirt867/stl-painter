@@ -60,7 +60,6 @@ function toNdc(e: PointerEvent): void
 canvas.addEventListener('pointerdown', (e) =>
 {
   if (e.button !== 0) return
-  if (e.shiftKey) return // Shift+left-drag is the free-move (orbit) override
 
   if (painter && state.mode === 'paint')
   {
@@ -149,16 +148,20 @@ window.addEventListener('keydown', (e) =>
   else if (k === 'y' || (k === 'z' && e.shiftKey)) { if (history?.redo()) e.preventDefault() }
 })
 
-// Hold Shift to free-move (orbit) with left-drag even while a tool owns the
-// left button. Releasing Shift restores the tool's left-click.
-function setLeftOrbit(on: boolean): void
-{
-  if (state.mode === 'orbit') return
-  ;(ctx.controls.mouseButtons as any).LEFT = on ? THREE.MOUSE.ROTATE : null
-}
-window.addEventListener('keydown', (e) => { if (e.key === 'Shift') setLeftOrbit(true) })
-window.addEventListener('keyup', (e) => { if (e.key === 'Shift') setLeftOrbit(false) })
-window.addEventListener('blur', () => setLeftOrbit(false))
+// On window + capture phase so it runs before OrbitControls' own pointerdown
+// reads mouseButtons. Net result: plain right = orbit, Ctrl+right = pan.
+window.addEventListener(
+  'pointerdown',
+  (e) =>
+  {
+    if (e.button !== 2 || state.mode === 'orbit') return
+    const nonCtrlModifier = (e.shiftKey || e.metaKey) && !e.ctrlKey
+    ;(ctx.controls.mouseButtons as any).RIGHT = nonCtrlModifier
+      ? THREE.MOUSE.PAN
+      : THREE.MOUSE.ROTATE
+  },
+  { capture: true },
+)
 
 // In paint/region modes the left button acts on the surface, so orbit moves to
 // right-drag. In orbit mode left-drag orbits as usual.
@@ -190,7 +193,7 @@ function updateHud(): void
   let hint: string
   if (state.mode === 'paint')
   {
-    hint = 'left-drag to paint · shift- or right-drag to orbit'
+    hint = 'left-drag to paint · right-drag orbits · ctrl+right-drag moves'
   }
   else if (state.mode === 'region')
   {
@@ -198,11 +201,11 @@ function updateHud(): void
     {
       hint =
         `drag to fill · shift+scroll to size ` +
-        `(${region.levelIndex + 1}/${region.levelCount}, ~${region.levelAngle}°) · shift- or right-drag to orbit`
+        `(${region.levelIndex + 1}/${region.levelCount}, ~${region.levelAngle}°) · right-drag orbits · ctrl+right-drag moves`
     }
-    else hint = 'drag to fill · shift- or right-drag to orbit'
+    else hint = 'drag to fill · right-drag orbits · ctrl+right-drag moves'
   }
-  else hint = 'left-drag to orbit'
+  else hint = 'left-drag to orbit · right-drag to pan'
   hud.innerHTML =
     `<b>STL Painter — demo</b><br>` +
     `${modelInfo}<br>` +

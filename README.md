@@ -55,11 +55,11 @@ exported from this tool restores its colors).
 
 Pick a tool with the **Mode** selector, choose a **Color**, then:
 
-| Mode | Left‑drag | Scroll | Orbit |
+| Mode | Left‑drag | Right‑drag | Scroll |
 | --- | --- | --- | --- |
-| **Region fill** (default) | drag to fill segments | **Shift+scroll** resizes the selection | Shift‑drag or right‑drag |
-| **Paint** | brush color on | zoom | Shift‑drag or right‑drag |
-| **Orbit** | orbit | zoom | — |
+| **Region fill** (default) | fill the part under the cursor (drag to sweep several) | orbit · **Ctrl+right‑drag** pans | **Shift+scroll** resizes the selection · plain scroll zooms |
+| **Paint** | brush color onto the surface | orbit · **Ctrl+right‑drag** pans | zoom |
+| **Orbit** | orbit | pan | zoom |
 
 - **Undo / Redo:** `Ctrl+Z` / `Ctrl+Y`.
 - **Export:** the *Export* panel writes `.3mf` (for slicing) or `.ply`.
